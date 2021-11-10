@@ -6,6 +6,7 @@ import utils as _utils
 import model as _model
 import IPython.display as display
 from matplotlib import pyplot as plt
+import tensorflow as tf
 
 def print_images(images, titles=None):
     if titles is not None:
@@ -49,6 +50,17 @@ def run_demo():
     content_image = load_file_or_url('https://images.unsplash.com/photo-1501820488136-72669149e0d4', 'photo-1501820488136-72669149e0d4')
     style_image = load_file_or_url('https://upload.wikimedia.org/wikipedia/commons/8/8c/Vincent_van_gogh%2C_la_camera_da_letto%2C_1889%2C_02.jpg','Vincent_van_gogh%2C_la_camera_da_letto%2C_1889%2C_02.jpg')
     output_image = transfer_style(content_image, style_image)
+    print_images([content_image, style_image, output_image], ['Source image','Style Image', 'Output Image'])
+
+def run_manual_demo(n=100):
+    """
+    Runs a demo of the code using 
+    """
+    content_image = load_file_or_url('https://images.unsplash.com/photo-1501820488136-72669149e0d4', 'photo-1501820488136-72669149e0d4')
+    style_image = load_file_or_url('https://upload.wikimedia.org/wikipedia/commons/8/8c/Vincent_van_gogh%2C_la_camera_da_letto%2C_1889%2C_02.jpg','Vincent_van_gogh%2C_la_camera_da_letto%2C_1889%2C_02.jpg')
+    extractor, train_step, output_image = run_model_train(content_image, style_image)
+    for ii in range(n):
+        train_step(output_image)
     print_images([content_image, style_image, output_image], ['Source image','Style Image', 'Output Image'])
     
 def run_model_train(content_image, style_image, n=100):
