@@ -93,7 +93,8 @@ def make_loss(content_image, style_image, model):
       return loss
   return style_content_loss
   
-def make_train(style_content_loss, model):
+def make_train(content_image, style_image, model):
+  style_content_loss = make_loss(content_image, style_image, model)
   @tf.function()
   def train_step(image):
     """

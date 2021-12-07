@@ -6,6 +6,7 @@ import utils as _utils
 import model as _model
 import IPython.display as display
 from matplotlib import pyplot as plt
+import progressbar
 import tensorflow as tf
 
 def print_images(images, titles=None):
@@ -59,12 +60,17 @@ def run_manual_demo(n=100):
     content_image = load_file_or_url('https://images.unsplash.com/photo-1501820488136-72669149e0d4', 'photo-1501820488136-72669149e0d4')
     style_image = load_file_or_url('https://upload.wikimedia.org/wikipedia/commons/8/8c/Vincent_van_gogh%2C_la_camera_da_letto%2C_1889%2C_02.jpg','Vincent_van_gogh%2C_la_camera_da_letto%2C_1889%2C_02.jpg')
     extractor, train_step, output_image = run_model_train(content_image, style_image)
-    for ii in range(n):
-        train_step(output_image)
+    with progressbar.ProgressBar(max_value=n) as bar: 
+        for ii in range(n):
+            bar.update(ii)
+            train_step(output_image)
     print_images([content_image, style_image, output_image], ['Source image','Style Image', 'Output Image'])
     
-def run_model_train(content_image, style_image, n=100):
-    extractor = _model.StyleContentModel()
+def run_model_train(style_image, extractor=None, content_image=None):
+    if extractor is None:
+        extractor = _model.StyleContentModel()
+    if content_image is None:
+        content_image = style_image*0
     image = _model.tf.Variable(content_image)
-    train_step = _model.make_train(_model.make_loss(content_image, style_image, extractor), extractor)
+    train_step = _model.make_train(content_image, style_image, extractor)
     return extractor, train_step, image
